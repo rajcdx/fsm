@@ -7,7 +7,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/looplab/fsm"
+	"github.com/rajcdx/fsm"
 )
 
 func main() {

@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/looplab/fsm"
+	"github.com/rajcdx/fsm"
 )
 
 func main() {
