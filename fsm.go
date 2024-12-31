@@ -74,15 +74,15 @@ type FSM struct {
 // the specified destination state, calling all defined callbacks as it goes.
 type EventDesc struct {
 	// Name is the event name used when calling for a transition.
-	Name string
+	Name string `json:"name"`
 
 	// Src is a slice of source states that the FSM must be in to perform a
 	// state transition.
-	Src []string
+	Src []string `json:"src"`
 
 	// Dst is the destination state that the FSM will be in if the transition
 	// succeeds.
-	Dst string
+	Dst string `json:"dst"`
 }
 
 // Callback is a function type that callbacks should use. Event is the current
@@ -316,15 +316,20 @@ func (f *FSM) Event(ctx context.Context, event string, args ...interface{}) erro
 	if f.transition != nil {
 		return InTransitionError{event}
 	}
-
-	dst, ok := f.transitions[eKey{event, f.current}]
-	if !ok {
-		for ekey := range f.transitions {
-			if ekey.event == event {
-				return InvalidEventError{event, f.current}
+	var ok bool
+	var dst string
+	if f.current == event {
+		dst = f.current
+	} else {
+		dst, ok = f.transitions[eKey{event, f.current}]
+		if !ok {
+			for ekey := range f.transitions {
+				if ekey.event == event {
+					return InvalidEventError{event, f.current}
+				}
 			}
+			return UnknownEventError{event}
 		}
-		return UnknownEventError{event}
 	}
 
 	ctx, cancel := context.WithCancel(ctx)
